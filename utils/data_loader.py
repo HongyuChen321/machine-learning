@@ -106,7 +106,9 @@ class DataLoader:
         return result if result else None
 
     def _to_epoch_tensors(self, data_list, label_list=None, epoch_size=6000, device='cuda'):
-        """把连续数据按 epoch_size 切分并转换为 PyTorch 张量，返回 (data_tensor, label_tensor)。"""
+        """把连续数据按 epoch_size 切分并转换为 PyTorch 张量，返回 (data_tensor, label_tensor)。
+        data_tensor 现在为三维： (n_epochs, channels, time)，channels 固定为 1。
+        """
         if data_list is None:
             return None, None
         if device == 'cuda' and not torch.cuda.is_available():
@@ -127,7 +129,8 @@ class DataLoader:
             return None, None
 
         trim = n_epochs * epoch_size
-        data_tensor = data_tensor[:trim].view(n_epochs, epoch_size).to(device)
+        # 改为 (n_epochs, 1, epoch_size) -> (batch, channels, time)
+        data_tensor = data_tensor[:trim].view(n_epochs, 1, epoch_size).to(device)
         if label_list is not None:
             label_tensor = torch.tensor(label_list[:n_epochs], dtype=torch.long, device=device)
         else:
@@ -138,3 +141,15 @@ if __name__ == "__main__":
     loader = DataLoader()
     print("Fold 1 data shape:", loader.data_fold1.shape if loader.data_fold1 is not None else None)
     print("Fold 1 label shape:", loader.label_fold1.shape if loader.label_fold1 is not None else None)
+
+    print("Fold 2 data shape:", loader.data_fold2.shape if loader.data_fold2 is not None else None)
+    print("Fold 2 label shape:", loader.label_fold2.shape if loader.label_fold2 is not None else None)
+
+    print("Fold 3 data shape:", loader.data_fold3.shape if loader.data_fold3 is not None else None)
+    print("Fold 3 label shape:", loader.label_fold3.shape if loader.label_fold3 is not None else None)
+
+    print("Fold 4 data shape:", loader.data_fold4.shape if loader.data_fold4 is not None else None)
+    print("Fold 4 label shape:", loader.label_fold4.shape if loader.label_fold4 is not None else None)
+
+    print("Fold 5 data shape:", loader.data_fold5.shape if loader.data_fold5 is not None else None)
+    print("Fold 5 label shape:", loader.label_fold5.shape if loader.label_fold5 is not None else None)
